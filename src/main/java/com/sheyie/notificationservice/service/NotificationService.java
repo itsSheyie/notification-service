@@ -3,6 +3,7 @@ package com.sheyie.notificationservice.service;
 import com.sheyie.notificationservice.dto.NotificationRequest;
 import com.sheyie.notificationservice.dto.NotificationResponse;
 import com.sheyie.notificationservice.entity.Notification;
+import com.sheyie.notificationservice.messaging.NotificationProducer;
 import com.sheyie.notificationservice.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class NotificationService {
     private final NotificationRepository notificationRepository;
+    private final NotificationProducer notificationProducer;
 
 
     public NotificationResponse createNotification(NotificationRequest request,
@@ -34,6 +36,7 @@ public class NotificationService {
 
         try{
            Notification saved = notificationRepository.save(notification);
+           notificationProducer.publish(saved.getId());
            return NotificationResponse.mapToResponse(saved);
         }catch (DataIntegrityViolationException e){
             if(idempotencyKey == null) throw e;
