@@ -15,7 +15,8 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
 
 
-    public NotificationResponse createNotification(NotificationRequest request, String idempotencyKey){
+    public NotificationResponse createNotification(NotificationRequest request,
+                                                   String idempotencyKey){
 
         if(idempotencyKey != null){
             var existing = notificationRepository.findByIdempotencyKey(idempotencyKey);
@@ -40,8 +41,6 @@ public class NotificationService {
                     .map(NotificationResponse::mapToResponse)
                     .orElseThrow(()-> e);
         }
-
-
     }
 
 }
